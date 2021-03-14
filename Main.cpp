@@ -2,10 +2,10 @@
 # include "token.h"
 # include "symbol_table.h"
 
-double expression();
-double term();
-double factorial();
-double primary();
+double expression(Token_stream& ts);
+double term(Token_stream& ts);
+double factorial(Token_stream& ts);
+double primary(Token_stream& ts);
 double get_factorial(double val);
 void calculate();
 void clean_up_mess();
@@ -48,9 +48,9 @@ int main()
     }
 }
 
-double expression()
+double expression(Token_stream& ts)
 {
-    double left = term();
+    double left = term(ts);
     Token t = ts.get();
 
     while (true)
@@ -59,13 +59,13 @@ double expression()
         {
             case '+':
                 {
-                    left += term();
+                    left += term(ts);
                     t = ts.get();
                     break;
                 }
             case '-':
                 {
-                    left -= term();
+                    left -= term(ts);
                     t = ts.get();
                     break;
                 }
@@ -76,9 +76,9 @@ double expression()
     }
 }
 
-double term()
+double term(Token_stream& ts)
 {
-    double left = factorial();
+    double left = factorial(ts);
     Token t = ts.get();
 
     while (true)
@@ -87,13 +87,13 @@ double term()
         {
             case '*':
                 {
-                    left *= factorial();
+                    left *= factorial(ts);
                     t = ts.get();
                     break;
                 }
             case '/':
                 {
-                    double d = factorial();
+                    double d = factorial(ts);
 
                     if (!d)
                     {
@@ -106,7 +106,7 @@ double term()
                 }
             case '%':
                 {
-                    double d = factorial();
+                    double d = factorial(ts);
 
                     if (!d)
                     {
@@ -124,9 +124,9 @@ double term()
     }
 }
 
-double factorial()
+double factorial(Token_stream& ts)
 {
-    double left = primary();
+    double left = primary(ts);
     Token t = ts.get();
 
     while (true)
@@ -146,7 +146,7 @@ double factorial()
     }
 }
 
-double primary()
+double primary(Token_stream& ts)
 {
     Token t = ts.get();
 
@@ -154,7 +154,7 @@ double primary()
     {
         case '(':
             {
-                double d = expression();
+                double d = expression(ts);
                 t = ts.get();
 
                 if (t.kind != ')')
@@ -165,7 +165,7 @@ double primary()
             }
         case '{':
             {
-                double d = expression();
+                double d = expression(ts);
                 t = ts.get();
 
                 if (t.kind != '}')
@@ -177,9 +177,9 @@ double primary()
         case number:
             return t.value;
         case '-':
-            return -primary();
+            return -primary(ts);
         case '+':
-            return primary();
+            return primary(ts);
         case name:
             return names.get(t.name);
         default:
@@ -268,7 +268,7 @@ double statement()
             }
         default:
             ts.putback(t);
-            return expression();
+            return expression(ts);
     }
 }
 
@@ -290,7 +290,7 @@ double set_variable(bool is_const, bool is_declaration)
         error("= missing in declaration/assignment of ", var_name);
     }
 
-    double d = expression();
+    double d = expression(ts);
 
     if (is_declaration)
     {
@@ -312,7 +312,7 @@ double sqrt_pattern()
     {
         case '(':
             {
-                double d = expression();
+                double d = expression(ts);
                 t = ts.get();
 
                 if (t.kind != ')')
@@ -341,7 +341,7 @@ double pow_pattern()
     {
         case '(':
             {
-                double x = expression();
+                double x = expression(ts);
                 t = ts.get();
 
                 if (t.kind != ',')
@@ -349,7 +349,7 @@ double pow_pattern()
                     error("',' expected");
                 }
 
-                double i = expression();
+                double i = expression(ts);
                 t = ts.get();
 
                 if (t.kind != ')')

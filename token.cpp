@@ -20,7 +20,7 @@ Token Token_stream::get()
     }
 
     char ch;
-    ch = std::cin.get();
+    ch = my_cin.get();
 
     switch (ch)
     {
@@ -50,9 +50,9 @@ Token Token_stream::get()
         case '8':
         case '9':
             {
-                std::cin.putback(ch);
+                my_cin.putback(ch);
                 double val;
-                std::cin >> val;
+                my_cin >> val;
                 return Token { number, val };
             }
         case '#':
@@ -75,13 +75,13 @@ Token Token_stream::get()
                     {
                         s += ch;
 
-                        if (!std::cin.get(ch) || (!isalnum(ch) && ('_' != ch)))
+                        if (!my_cin.get(ch) || (!isalnum(ch) && ('_' != ch)))
                         {
                             break;
                         }
                     }
 
-                    std::cin.putback(ch);
+                    my_cin.putback(ch);
 
                     if (s == declkey)
                     {
@@ -128,7 +128,7 @@ void Token_stream::ignore(char c)
     full = false;
 
     char ch;
-    while (std::cin >> ch)
+    while (my_cin >> ch)
     {
         if (ch == c)
         {

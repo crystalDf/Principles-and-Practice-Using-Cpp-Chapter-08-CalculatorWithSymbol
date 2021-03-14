@@ -40,11 +40,12 @@ public:
 class Token_stream
 {
 public:
-    Token_stream() : full { false }, buffer { ' ' } { }
+    Token_stream(istream& my_cin_istream = std::cin) : full { false }, buffer { ' ' }, my_cin { my_cin_istream } { }
     Token get();
     void putback(Token t);
     void ignore(char c);
 private:
     bool full;
     Token buffer;
+    istream& my_cin;
 };
